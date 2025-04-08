@@ -8,7 +8,7 @@ const Navbar = () => {
       <nav className="container mx-auto flex justify-between">
         {/* logo */}
         <div>
-          <a href="/" className="font-black text-3xl">
+          <a href="product" className="font-black text-3xl">
             Logo
           </a>
         </div>

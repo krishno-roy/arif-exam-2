@@ -54,13 +54,13 @@ const Cart = () => {
               <div className="flex gap-5 p-4 w-1/2">
                 <div className="bg-gray-200 p-3">
                   <img
-                    src={item.images[0]}
+                    src={item.images?.[0] || "https://via.placeholder.com/150"}
                     alt={item.title}
                     className="w-24 h-24 object-cover"
                   />
                 </div>
                 <div className="space-y-2">
-                  <h1>{item.title}</h1>
+                  <h1 className="font-semibold">{item.title}</h1>
                   <p>${item.price}</p>
                   <span>Quantity: {item.quantity}</span>
                 </div>
@@ -98,7 +98,7 @@ const Cart = () => {
             <h2>Shipping</h2>
             <p>${shipping}</p>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between font-semibold text-lg">
             <h2>Total</h2>
             <p>${total}</p>
           </div>
