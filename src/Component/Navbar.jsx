@@ -1,42 +1,83 @@
-import React from 'react'
-import { FaCartPlus } from 'react-icons/fa';
-import { IoSearchOutline } from 'react-icons/io5';
+import React, { useState } from "react";
+import { FaCartPlus } from "react-icons/fa";
+import { IoSearchOutline } from "react-icons/io5";
+import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
 
 const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <header>
-      <nav className="container mx-auto flex justify-between">
-        {/* logo */}
+    <header className="bg-white shadow-md">
+      <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
+        {/* Logo */}
         <div>
-          <a href="product" className="font-black text-3xl">
+          <a href="/" className="font-black text-3xl text-black">
             Logo
           </a>
         </div>
-        {/* desktop menu */}
-        <div>
-          <ul className="flex gap-7 texy-lg font-semibold">
-            <li>
-              <a href="product">Home</a>
-            </li>
-            <li>
-              <a href="todos">Todos</a>
-            </li>
-            <li>
-              <a href="cart">Cart</a>
-            </li>
-            <li>
-              <a href="blog">Blog</a>
-            </li>
-          </ul>
+
+        {/* Desktop Menu */}
+        <ul className="hidden md:flex gap-7 text-lg font-semibold text-gray-700">
+         
+          <li>
+            <a href="/todos">Todos</a>
+          </li>
+          <li>
+            <a href="/cart">Cart</a>
+          </li>
+          <li>
+            <a href="/blog">Blog</a>
+          </li>
+        </ul>
+
+        {/* Icons */}
+        <div className="hidden md:flex gap-4 text-2xl text-black">
+          <IoSearchOutline className="cursor-pointer" />
+          <FaCartPlus className="cursor-pointer" />
         </div>
-        {/* cart  */}
-        <div className="flex gap-4 text-2xl">
-          <IoSearchOutline />
-          <FaCartPlus />
+
+        {/* Hamburger Icon */}
+        <div
+          className="md:hidden text-3xl text-black"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <HiOutlineX /> : <HiOutlineMenuAlt3 />}
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden px-6 pb-4">
+          <ul className="flex flex-col gap-4 text-lg font-medium text-gray-700">
+            <li>
+              <a href="/" onClick={() => setMenuOpen(false)}>
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="/todos" onClick={() => setMenuOpen(false)}>
+                Todos
+              </a>
+            </li>
+            <li>
+              <a href="/cart" onClick={() => setMenuOpen(false)}>
+                Cart
+              </a>
+            </li>
+            <li>
+              <a href="/blog" onClick={() => setMenuOpen(false)}>
+                Blog
+              </a>
+            </li>
+          </ul>
+          <div className="flex gap-4 text-2xl mt-4 text-black">
+            <IoSearchOutline className="cursor-pointer" />
+            <FaCartPlus className="cursor-pointer" />
+          </div>
+        </div>
+      )}
     </header>
   );
-}
+};
 
-export default Navbar
+export default Navbar;

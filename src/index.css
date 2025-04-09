@@ -20,31 +20,8 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
-nav {
-  max-width: var(--max-width-1200);
-  margin: auto;
-  padding: 2rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
 
-.nav__links {
-  flex: 1;
-  list-style: none;
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
 
-.link a {
-  font-weight: 500;
-  color: var(--text-dark);
-}
-
-.link a:hover {
-  color: var(--primary-color);
-}
 
 .img {
     width: 12% !important;

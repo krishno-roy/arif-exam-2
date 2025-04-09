@@ -17,7 +17,7 @@ const Todos = () => {
   };
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto px-12 pt-10">
       <h2 className="text-2xl font-bold mb-7">Todos Apps</h2>
       <div className="flex gap-6">
         <input

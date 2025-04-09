@@ -44,35 +44,42 @@ const Cart = () => {
   const total = subtotal + tax + shipping;
 
   return (
-    <div className="container mx-auto flex gap-3">
-      <div className="w-8/12 space-y-4">
+    <div className="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-6">
+      {/* Cart Items */}
+      <div className="w-full lg:w-8/12 space-y-4">
         {cartItems.length === 0 ? (
           <p className="text-center text-gray-500">Your cart is empty.</p>
         ) : (
           cartItems.map((item, index) => (
-            <div key={index} className="flex border rounded">
-              <div className="flex gap-5 p-4 w-1/2">
-                <div className="bg-gray-200 p-3">
+            <div
+              key={index}
+              className="flex flex-col md:flex-row border rounded p-4"
+            >
+              {/* Image & Info */}
+              <div className="flex gap-5 w-full md:w-1/2 ">
+                <div className="bg-gray-200 p-2 rounded">
                   <img
                     src={item.images?.[0] || "https://via.placeholder.com/150"}
                     alt={item.title}
-                    className="w-24 h-24 object-cover"
+                    className="w-24 h-24 object-cover rounded"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <h1 className="font-semibold">{item.title}</h1>
                   <p>${item.price}</p>
                   <span>Quantity: {item.quantity}</span>
                 </div>
               </div>
-              <div className="w-1/2 p-3 flex flex-col items-end">
+
+              {/* Actions */}
+              <div className="w-full md:w-1/2 mt-4 md:mt-0 flex flex-col items-end justify-between">
                 <button
                   onClick={() => handleDelete(index)}
-                  className="cursor-pointer mb-2 text-red-500"
+                  className="text-red-500 mb-2"
                 >
                   Delete
                 </button>
-                <div className="bg-gray-200 w-[100px] flex justify-center space-x-4 rounded-full mt-18">
+                <div className="bg-gray-200 w-[100px] flex justify-center space-x-4 rounded-full">
                   <button onClick={() => decreaseQuantity(index)}>-</button>
                   <span className="w-[16px] text-center">{item.quantity}</span>
                   <button onClick={() => increaseQuantity(index)}>+</button>
@@ -83,7 +90,8 @@ const Cart = () => {
         )}
       </div>
 
-      <div className="w-4/12 border border-black rounded p-4 space-y-4 h-[300px] flex flex-col justify-between">
+      {/* Summary */}
+      <div className="w-full lg:w-4/12 border border-black rounded p-6 space-y-6 h-fit">
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">Summary</h2>
           <div className="flex justify-between">
@@ -103,7 +111,7 @@ const Cart = () => {
             <p>${total}</p>
           </div>
         </div>
-        <button className="text-center py-2 px-4 w-full bg-black text-white rounded">
+        <button className="py-2 px-4 w-full bg-black text-white rounded hover:bg-gray-800 transition">
           Checkout
         </button>
       </div>

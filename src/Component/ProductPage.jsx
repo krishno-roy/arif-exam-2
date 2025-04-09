@@ -26,7 +26,6 @@ const ProductPage = () => {
 
     localStorage.setItem("cart", JSON.stringify(existingCart));
     alert(`${product.title} added to cart!`);
-    // নোট: এখানে navigate("/cart") রিমুভ করা হয়েছে যাতে ইউজার কার্ট পেজে অটো রিডাইরেক্ট না হয়
   };
 
   return (
