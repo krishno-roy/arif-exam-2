@@ -5,8 +5,7 @@
         "dest": "/"
        },
        {
-        "src": "/test",
-        "element":"/"
+        "src": "/test"
        }
     ]
 }
