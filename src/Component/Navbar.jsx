@@ -18,7 +18,6 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex gap-7 text-lg font-semibold text-gray-700">
-         
           <li>
             <a href="/todos">Todos</a>
           </li>
@@ -38,9 +37,13 @@ const Navbar = () => {
 
         {/* Hamburger Icon */}
         <div
-          className="md:hidden text-3xl text-black"
+          className="md:hidden text-3xl text-black flex items-center gap-4"
           onClick={() => setMenuOpen(!menuOpen)}
         >
+          <div className="flex gap-4 text-2xl  text-black">
+            <IoSearchOutline className="cursor-pointer" />
+            <FaCartPlus className="cursor-pointer" />
+          </div>
           {menuOpen ? <HiOutlineX /> : <HiOutlineMenuAlt3 />}
         </div>
       </nav>
@@ -70,10 +73,6 @@ const Navbar = () => {
               </a>
             </li>
           </ul>
-          <div className="flex gap-4 text-2xl mt-4 text-black">
-            <IoSearchOutline className="cursor-pointer" />
-            <FaCartPlus className="cursor-pointer" />
-          </div>
         </div>
       )}
     </header>
