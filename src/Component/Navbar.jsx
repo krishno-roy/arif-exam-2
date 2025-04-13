@@ -2,140 +2,195 @@ import React, { useState, useEffect } from "react";
 import { FaCartPlus } from "react-icons/fa";
 import { IoSearchOutline, IoClose } from "react-icons/io5";
 import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
+import { IoMdClose } from "react-icons/io";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupItems, setPopupItems] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Load cart count from localStorage
-    const updateCartCount = () => {
+    const updateCart = () => {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((total, item) => total + item.quantity, 0);
-      setCartCount(count);
+      setCartCount(cart.reduce((total, item) => total + item.quantity, 0));
+      setPopupItems(cart);
+      setShowPopup(true);
+
+      // Auto close popup after 3s
+      setTimeout(() => setShowPopup(false), 30000);
     };
 
-    // Initial load
-    updateCartCount();
-
-    // Listen for cart updates
-    window.addEventListener("cartUpdated", updateCartCount);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("cartUpdated", updateCartCount);
-    };
+    updateCart();
+    window.addEventListener("cartUpdated", updateCart);
+    return () => window.removeEventListener("cartUpdated", updateCart);
   }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
       setSearchOpen(false);
       setSearchTerm("");
     }
   };
 
-  return (
-    <>
-      <header className="bg-white shadow-md">
-        <nav className="container mx-auto px-4 py-4 flex justify-between items-center relative z-50">
-          {/* Logo */}
-          <div>
-            <Link to="/" className="font-black text-3xl text-black">
-              <img src={Logo} alt="" className="h-15" />
-            </Link>
-          </div>
+  const handleRemoveFromCart = (productId) => {
+    // Get current cart from localStorage
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-          {/* Desktop Menu */}
-          <ul className="hidden md:flex gap-7 text-lg font-semibold text-gray-700">
+    // Filter out the item with the matching product ID
+    const updatedCart = cart.filter((item) => item.id !== productId);
+
+    // Update localStorage with the new cart
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+    // Dispatch an event to notify the Navbar to update cart count and popup items
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
+  return (
+    <header className="bg-white shadow-md relative">
+      <nav className="container mx-auto px-4 py-4 flex justify-between items-center relative z-50">
+        <Link to="/">
+          <img src={Logo} alt="Logo" className="h-10" />
+        </Link>
+
+        <ul className="hidden md:flex gap-7 text-lg font-semibold text-gray-700">
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/todos">Todos</Link>
+          </li>
+          <li>
+            <Link to="/cart">Cart</Link>
+          </li>
+          <li>
+            <Link to="/blog">Blog</Link>
+          </li>
+        </ul>
+
+        <div className="hidden md:flex gap-4 text-2xl text-black items-center">
+          <button onClick={() => setSearchOpen(true)}>
+            <IoSearchOutline className="cursor-pointer" />
+          </button>
+          <Link to="/cart" className="relative">
+            <FaCartPlus className="cursor-pointer" />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+        </div>
+
+        <div className="md:hidden flex items-center gap-4 text-3xl">
+          <button onClick={() => setSearchOpen(true)}>
+            <IoSearchOutline />
+          </button>
+          <Link to="/cart" className="relative">
+            <FaCartPlus />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+          <button onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? <HiOutlineX /> : <HiOutlineMenuAlt3 />}
+          </button>
+        </div>
+      </nav>
+
+      {showPopup && (
+        <div className="absolute right-6 top-20 bg-white border border-gray-300 rounded-lg shadow-lg w-sm z-50">
+          <div className="p-4">
+            {/* Close Button at Top Left */}
+            <button
+              onClick={() => setShowPopup(false)}
+              className="absolute top-4 left-4 text-2xl text-gray-500 hover:text-black"
+            >
+              <IoMdClose />
+            </button>
+
+            <h3 className="font-semibold mb-2">Added to Cart</h3>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {popupItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex gap-2  border p-2 rounded relative"
+                >
+                  <img
+                    src={item.thumbnail}
+                    alt={item.title}
+                    className="h-17  bg-cover object-cover prodcutimg  "
+                  />
+                  <div className="text-sm">
+                    <p>{item.title.slice(0, 20)}</p>
+                    <p>Qty: {item.quantity}</p>
+                    <p>${item.price}</p>
+                  </div>
+                  {/* Add a "Remove" button */}
+                  <button
+                    onClick={() => handleRemoveFromCart(item.id)}
+                    className="text-red-500 hover:underline ml-2 absolute right-4"
+                  >
+                    <IoMdClose />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => navigate("/cart")}
+              className="mt-4 w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+            >
+              Go to Checkout
+            </button>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="w-full mt-2 text-sm text-gray-600 hover:underline"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {menuOpen && (
+        <div className="md:hidden px-6 pb-4">
+          <ul className="flex flex-col gap-4 text-lg font-medium text-gray-700">
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/" onClick={() => setMenuOpen(false)}>
+                Home
+              </Link>
             </li>
             <li>
-              <Link to="/todos">Todos</Link>
+              <Link to="/todos" onClick={() => setMenuOpen(false)}>
+                Todos
+              </Link>
             </li>
             <li>
-              <Link to="/cart">Cart</Link>
+              <Link to="/cart" onClick={() => setMenuOpen(false)}>
+                Cart
+              </Link>
             </li>
             <li>
-              <Link to="/blog">Blog</Link>
+              <Link to="/blog" onClick={() => setMenuOpen(false)}>
+                Blog
+              </Link>
             </li>
           </ul>
+        </div>
+      )}
 
-          {/* Icons */}
-          <div className="hidden md:flex gap-4 text-2xl text-black items-center">
-            <button onClick={() => setSearchOpen(true)}>
-              <IoSearchOutline className="cursor-pointer" />
-            </button>
-            <Link to="/cart" className="relative">
-              <FaCartPlus className="cursor-pointer" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-          </div>
-
-          {/* Hamburger Icon */}
-          <div
-            className="md:hidden text-3xl text-black flex items-center gap-4"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            <div className="flex gap-4 text-2xl text-black items-center">
-              <button onClick={() => setSearchOpen(true)}>
-                <IoSearchOutline className="cursor-pointer" />
-              </button>
-              <Link to="/cart" className="relative">
-                <FaCartPlus className="cursor-pointer" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-            </div>
-            {menuOpen ? <HiOutlineX /> : <HiOutlineMenuAlt3 />}
-          </div>
-        </nav>
-
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <div className="md:hidden px-6 pb-4">
-            <ul className="flex flex-col gap-4 text-lg font-medium text-gray-700">
-              <li>
-                <Link to="/" onClick={() => setMenuOpen(false)}>
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/todos" onClick={() => setMenuOpen(false)}>
-                  Todos
-                </Link>
-              </li>
-              <li>
-                <Link to="/cart" onClick={() => setMenuOpen(false)}>
-                  Cart
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog" onClick={() => setMenuOpen(false)}>
-                  Blog
-                </Link>
-              </li>
-            </ul>
-          </div>
-        )}
-      </header>
-
-      {/* Search Popup */}
       {searchOpen && (
-        <div className="fixed inset-0 bg-black/50 bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
             <button
               onClick={() => setSearchOpen(false)}
@@ -144,27 +199,18 @@ const Navbar = () => {
               <IoClose />
             </button>
             <form onSubmit={handleSearch} className="mt-2">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="w-full px-6 py-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-black text-lg"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  className="absolute right-4 top-4 text-2xl text-gray-500 hover:text-black"
-                >
-                  <IoSearchOutline />
-                </button>
-              </div>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-6 py-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-black text-lg"
+              />
             </form>
           </div>
         </div>
       )}
-    </>
+    </header>
   );
 };
 
