@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { IoEyeSharp } from "react-icons/io5";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 
 const ProductPage = () => {
   const [allProducts, setAllProducts] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(8); // Start with 8 products
+  const [visibleCount, setVisibleCount] = useState(8);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -16,11 +17,11 @@ const ProductPage = () => {
         const data = await response.json();
         setAllProducts(data.products);
 
-        // Extract unique categories and add "all" option
         const uniqueCategories = [
-          ...new Set(data.products.map((p) => p.category)),
+          "all",
+          ...new Set(data.products.map((product) => product.category)),
         ];
-        setCategories(["all", ...uniqueCategories]);
+        setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -28,6 +29,18 @@ const ProductPage = () => {
 
     fetchProducts();
   }, []);
+
+  // Handle search from URL query params
+  useEffect(() => {
+    if (location.search) {
+      const searchParams = new URLSearchParams(location.search);
+      const searchTerm = searchParams.get("q");
+      if (searchTerm) {
+        // You can implement search functionality here if needed
+        console.log("Search term:", searchTerm);
+      }
+    }
+  }, [location]);
 
   const handleAddToCart = (product) => {
     const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -43,13 +56,21 @@ const ProductPage = () => {
 
     localStorage.setItem("cart", JSON.stringify(existingCart));
     alert(`${product.title} added to cart!`);
+
+    // Update cart count in navbar
+    const event = new Event("cartUpdated");
+    window.dispatchEvent(event);
   };
 
   const handleViewMore = () => {
-    setVisibleCount((prev) => prev + 4); // Load 4 more products
+    setVisibleCount((prevCount) => prevCount + 4);
   };
 
-  // Filter products by selected category
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setVisibleCount(8);
+  };
+
   const filteredProducts =
     selectedCategory === "all"
       ? allProducts
@@ -57,34 +78,31 @@ const ProductPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-8 text-center">Our Products</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        Our Products
+      </h2>
 
-      {/* Category Filter Buttons */}
-      <div className="flex flex-wrap justify-center gap-3 mb-10">
+      <div className="flex flex-wrap justify-center gap-4 mb-8">
         {categories.map((category) => (
           <button
             key={category}
-            onClick={() => {
-              setSelectedCategory(category);
-              setVisibleCount(8); // Reset to 8 products when category changes
-            }}
-            className={`px-4 py-2 rounded-full capitalize ${
+            onClick={() => handleCategoryChange(category)}
+            className={`px-6 py-3 rounded-full text-md font-medium transition ${
               selectedCategory === category
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 hover:bg-gray-200"
-            } transition`}
+                ? "bg-black text-white"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+            }`}
           >
-            {category}
+            {category.charAt(0).toUpperCase() + category.slice(1)}
           </button>
         ))}
       </div>
 
-      {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredProducts.slice(0, visibleCount).map((product) => (
           <div
             key={product.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+            className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition"
           >
             <img
               src={product.thumbnail}
@@ -96,17 +114,18 @@ const ProductPage = () => {
             />
             <div className="p-4">
               <h3
-                className="font-semibold text-lg mb-2 cursor-pointer hover:underline"
+                className="text-lg font-semibold mb-2 text-gray-900 cursor-pointer hover:underline"
                 onClick={() =>
                   navigate(`/product/${product.id}`, { state: { product } })
                 }
               >
-                {product.title}
+                {product.title.slice(0, 14)}
               </h3>
-
               <div className="mb-3">
-                <span className="text-lg font-bold">${product.price}</span>
-                {product.discountPercentage > 0 && (
+                <span className="text-lg font-bold text-black">
+                  ${product.price}
+                </span>
+                {product.discountPercentage && (
                   <span className="ml-2 text-sm text-gray-500 line-through">
                     $
                     {(
@@ -116,11 +135,10 @@ const ProductPage = () => {
                   </span>
                 )}
               </div>
-
-              <div className="flex gap-2">
+              <div className="flex justify-between items-center gap-3">
                 <button
                   onClick={() => handleAddToCart(product)}
-                  className="flex-1 py-2 bg-black text-white rounded hover:bg-gray-800"
+                  className="flex-1 py-3 px-2 text-lg bg-black text-white rounded hover:bg-gray-800 transition"
                 >
                   Add to Cart
                 </button>
@@ -128,9 +146,9 @@ const ProductPage = () => {
                   onClick={() =>
                     navigate(`/product/${product.id}`, { state: { product } })
                   }
-                  className="p-2 bg-gray-200 rounded hover:bg-gray-300 cursonre-pointer"
+                  className="p-3 bg-gray-200 rounded hover:bg-gray-300 transition"
                 >
-                  <IoEyeSharp size={80} />
+                  <IoEyeSharp size={25} />
                 </button>
               </div>
             </div>
@@ -138,12 +156,11 @@ const ProductPage = () => {
         ))}
       </div>
 
-      {/* View More Button (only shows if more products available) */}
       {visibleCount < filteredProducts.length && (
         <div className="text-center mt-10">
           <button
             onClick={handleViewMore}
-            className="px-6 py-3 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition"
+            className="px-10 py-4 text-lg bg-black text-white font-semibold rounded hover:bg-gray-700 transition"
           >
             View More Products
           </button>
