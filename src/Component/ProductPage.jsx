@@ -55,7 +55,7 @@ const ProductPage = () => {
     }
 
     localStorage.setItem("cart", JSON.stringify(existingCart));
-    alert(`${product.title} added to cart!`);
+   
 
     // Update cart count in navbar
     const event = new Event("cartUpdated");
