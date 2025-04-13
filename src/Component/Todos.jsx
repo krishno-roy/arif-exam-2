@@ -23,6 +23,9 @@ const Todos = () => {
         <input
           value={taks}
           onChange={(e) => setTask(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") addTask();
+          }}
           type="text"
           name="text"
           id="text"

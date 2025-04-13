@@ -46,7 +46,7 @@ const SingleProduct = () => {
       </button>
 
       <div className="flex flex-col md:flex-row gap-8 bg-white rounded-lg shadow-lg p-6">
-        {/* Image Gallery */}
+        {/* Image Section */}
         <div className="w-full md:w-1/2">
           <div className="mb-4 h-96 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
             <img
@@ -59,10 +59,9 @@ const SingleProduct = () => {
               }}
             />
           </div>
-        
         </div>
 
-        {/* Product Details */}
+        {/* Details Section */}
         <div className="w-full md:w-1/2">
           <h1 className="text-3xl font-bold mb-2">{product.title}</h1>
           <div className="flex items-center mb-4">
@@ -77,18 +76,18 @@ const SingleProduct = () => {
               ${product.price}
             </span>
             {product.discountPercentage && (
-              <span className="ml-2 text-sm text-gray-500 line-through">
-                $
-                {(
-                  product.price /
-                  (1 - product.discountPercentage / 100)
-                ).toFixed(2)}
-              </span>
-            )}
-            {product.discountPercentage && (
-              <span className="ml-2 bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
-                {Math.round(product.discountPercentage)}% OFF
-              </span>
+              <>
+                <span className="ml-2 text-sm text-gray-500 line-through">
+                  $
+                  {(
+                    product.price /
+                    (1 - product.discountPercentage / 100)
+                  ).toFixed(2)}
+                </span>
+                <span className="ml-2 bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
+                  {Math.round(product.discountPercentage)}% OFF
+                </span>
+              </>
             )}
           </div>
 
@@ -97,6 +96,7 @@ const SingleProduct = () => {
             Category: <span className="capitalize">{product.category}</span>
           </p>
 
+          {/* Quantity Selector & Button */}
           <div className="flex items-center gap-6 mb-8">
             <div className="flex items-center border rounded-full">
               <button
@@ -115,7 +115,7 @@ const SingleProduct = () => {
             </div>
             <button
               onClick={handleAddToCart}
-              className="flex-1 bg-black hover:bg-gray-400 text-white py-3 px-6 rounded-full text-lg font-medium transition-colors duration-300"
+              className="flex-1 bg-black hover:bg-gray-700 text-white py-3 px-6 rounded-full text-lg font-medium"
             >
               Add to Cart
             </button>
