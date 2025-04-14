@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { Link } from "react-router";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -71,24 +72,30 @@ const Cart = () => {
             >
               {/* Image & Info */}
               <div className="flex gap-4 flex-1">
-                <div className="bg-gray-100 p-2 rounded flex-shrink-0">
+                <Link
+                  to={`/products/${item.slug || item.id}`}
+                  className="bg-gray-100 p-2 rounded flex-shrink-0 hover:opacity-90 transition-opacity"
+                >
                   <img
                     src={item.images?.[0] || "https://via.placeholder.com/150"}
                     alt={item.title}
                     className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded"
                   />
-                </div>
+                </Link>
+
                 <div className="space-y-1 flex-1">
-                  <h1 className="font-semibold text-sm sm:text-base">
+                  <Link
+                    to={`/products/${item.slug || item.id}`}
+                    className="font-semibold text-sm sm:text-base hover:underline block"
+                  >
                     {item.title}
-                  </h1>
+                  </Link>
                   <p className="text-gray-600">${item.price.toFixed(2)}</p>
                   <span className="text-sm text-gray-500">
                     Quantity: {item.quantity}
                   </span>
                 </div>
               </div>
-
               {/* Actions */}
               <div className="flex flex-col sm:items-end justify-between">
                 <button

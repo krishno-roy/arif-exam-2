@@ -72,7 +72,10 @@ const Navbar = () => {
             <Link to="/cart">Cart</Link>
           </li>
           <li>
-            <Link to="/blog">Blog</Link>
+            <Link to="/blog">Post</Link>
+          </li>
+          <li>
+            <Link to="/blog2">Blog</Link>
           </li>
         </ul>
 
@@ -182,7 +185,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link to="/blog" onClick={() => setMenuOpen(false)}>
-                Blog
+                post
               </Link>
             </li>
           </ul>
