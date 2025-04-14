@@ -55,22 +55,7 @@ const Blog2 = () => {
               </div>
             </div>
 
-            <div className="p-4 border-t flex justify-between items-center">
-              <button
-                onClick={(e) => handleLike(post.id, e)}
-                className="flex items-center gap-1 text-green-600 hover:text-green-800"
-              >
-                <span>👍</span>
-                <span>{likes[post.id] || 0}</span>
-              </button>
-              <button
-                onClick={(e) => handleDislike(post.id, e)}
-                className="flex items-center gap-1 text-red-600 hover:text-red-800"
-              >
-                <span>👎</span>
-                <span>{dislikes[post.id] || 0}</span>
-              </button>
-            </div>
+            
           </div>
         ))}
       </div>

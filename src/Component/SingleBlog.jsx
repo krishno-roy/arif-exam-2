@@ -33,17 +33,7 @@ const SingleBlog = () => {
     fetchPost();
   }, [id]);
 
-  const handleLike = () => {
-    const newLikes = likes + 1;
-    setLikes(newLikes);
-    localStorage.setItem(`blog_${id}_likes`, newLikes.toString());
-  };
-
-  const handleDislike = () => {
-    const newDislikes = dislikes + 1;
-    setDislikes(newDislikes);
-    localStorage.setItem(`blog_${id}_dislikes`, newDislikes.toString());
-  };
+ 
 
   if (loading) {
     return <div className="text-center py-8">Loading...</div>;
@@ -57,7 +47,7 @@ const SingleBlog = () => {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <button
         onClick={() => navigate(-1)}
-        className="mb-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        className="mb-6 px-4 py-2 bg-black text-white rounded hover:bg-gray-500 transition-colors"
       >
         ← Back to Blog
       </button>
@@ -81,23 +71,6 @@ const SingleBlog = () => {
             {post.body}
           </p>
 
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleLike}
-              className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded hover:bg-green-200"
-            >
-              <span>👍</span>
-              <span>Like ({likes})</span>
-            </button>
-
-            <button
-              onClick={handleDislike}
-              className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-800 rounded hover:bg-red-200"
-            >
-              <span>👎</span>
-              <span>Dislike ({dislikes})</span>
-            </button>
-          </div>
         </div>
       </article>
     </div>
