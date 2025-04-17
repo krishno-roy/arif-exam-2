@@ -40,19 +40,7 @@ const Navbar = () => {
     }
   };
 
-  const handleRemoveFromCart = (productId) => {
-    // Get current cart from localStorage
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    // Filter out the item with the matching product ID
-    const updatedCart = cart.filter((item) => item.id !== productId);
-
-    // Update localStorage with the new cart
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-    // Dispatch an event to notify the Navbar to update cart count and popup items
-    window.dispatchEvent(new Event("cartUpdated"));
-  };
 
   return (
     <header className="bg-white shadow-md relative">
@@ -111,59 +99,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {showPopup && (
-        <div className="absolute right-6 top-20 bg-white border border-gray-300 rounded-lg shadow-lg w-sm z-50">
-          <div className="p-4">
-            {/* Close Button at Top Left */}
-            <button
-              onClick={() => setShowPopup(false)}
-              className="absolute top-4 left-4 text-2xl text-gray-500 hover:text-black"
-            >
-              <IoMdClose />
-            </button>
-
-            <h3 className="font-semibold mb-2">Added to Cart</h3>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {popupItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex gap-2  border p-2 rounded relative"
-                >
-                  <img
-                    src={item.thumbnail}
-                    alt={item.title}
-                    className="h-17  bg-cover object-cover prodcutimg  "
-                  />
-                  <div className="text-sm">
-                    <p>{item.title.slice(0, 20)}</p>
-                    <p>Qty: {item.quantity}</p>
-                    <p>${item.price}</p>
-                  </div>
-                  {/* Add a "Remove" button */}
-                  <button
-                    onClick={() => handleRemoveFromCart(item.id)}
-                    className="text-red-500 hover:underline ml-2 absolute right-4"
-                  >
-                    <IoMdClose />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={() => navigate("/cart")}
-              className="mt-4 w-full bg-black text-white py-2 rounded hover:bg-gray-800"
-            >
-              Go to Checkout
-            </button>
-            <button
-              onClick={() => setShowPopup(false)}
-              className="w-full mt-2 text-sm text-gray-600 hover:underline"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
 
       {menuOpen && (
         <div className="md:hidden px-6 pb-4">
